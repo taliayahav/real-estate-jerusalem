@@ -1,0 +1,4 @@
+bin/
+*.class
+.env
+.DS_Store
