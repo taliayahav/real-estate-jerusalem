@@ -2,3 +2,14 @@ bin/
 *.class
 .env
 .DS_Store
+
+# Spring Boot - credentials, never commit
+backend/src/main/resources/application.properties
+
+# Maven build output
+backend/target/
+
+# IDE
+.vscode/
+*.iml
+.idea/
