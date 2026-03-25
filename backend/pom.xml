@@ -13,8 +13,8 @@
 	<groupId>com.realestate</groupId>
 	<artifactId>backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>backend</name>
-	<description>Jerusalem Real Estate Platform</description>
+	<name>homebase</name>
+	<description>Homebase - Jerusalem Real Estate Platform</description>
 
 	<properties>
 		<java.version>21</java.version>
