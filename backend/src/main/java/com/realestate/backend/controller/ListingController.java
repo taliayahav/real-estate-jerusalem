@@ -1,6 +1,7 @@
 package com.realestate.backend.controller;
 
-import com.realestate.backend.model.Listing;
+import com.realestate.backend.dto.ListingRequest;
+import com.realestate.backend.dto.ListingResponse;
 import com.realestate.backend.service.ListingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,18 +18,18 @@ public class ListingController {
     private final ListingService listingService;
 
     @GetMapping
-    public ResponseEntity<List<Listing>> getAllListings() {
+    public ResponseEntity<List<ListingResponse>> getAllListings() {
         return ResponseEntity.ok(listingService.getAllListings());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Listing> getListingById(@PathVariable UUID id) {
+    public ResponseEntity<ListingResponse> getListingById(@PathVariable UUID id) {
         return ResponseEntity.ok(listingService.getListingById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Listing> createListing(@RequestBody Listing listing) {
-        return ResponseEntity.ok(listingService.createListing(listing));
+    public ResponseEntity<ListingResponse> createListing(@RequestBody ListingRequest request) {
+        return ResponseEntity.ok(listingService.createListing(request));
     }
 
     @DeleteMapping("/{id}")
