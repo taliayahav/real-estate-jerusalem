@@ -23,6 +23,13 @@ public class ListingController {
         return ResponseEntity.ok(listingService.getAllListings(filter));
     }
 
+    @GetMapping("/semantic-search")
+    public ResponseEntity<List<ListingResponse>> semanticSearch(
+            @RequestParam String q,
+            @RequestParam(defaultValue = "10") int limit) {
+        return ResponseEntity.ok(listingService.semanticSearch(q, limit));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ListingResponse> getListingById(@PathVariable UUID id) {
         return ResponseEntity.ok(listingService.getListingById(id));
@@ -31,6 +38,12 @@ public class ListingController {
     @PostMapping
     public ResponseEntity<ListingResponse> createListing(@RequestBody ListingRequest request) {
         return ResponseEntity.ok(listingService.createListing(request));
+    }
+
+    @PostMapping("/reindex")
+    public ResponseEntity<String> reindex() {
+        listingService.reindexAllListings();
+        return ResponseEntity.ok("All listings reindexed");
     }
 
     @DeleteMapping("/{id}")

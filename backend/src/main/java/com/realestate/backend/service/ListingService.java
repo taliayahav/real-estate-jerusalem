@@ -5,6 +5,7 @@ import com.realestate.backend.dto.ListingRequest;
 import com.realestate.backend.dto.ListingResponse;
 import com.realestate.backend.model.Listing;
 import com.realestate.backend.repository.ListingRepository;
+import com.realestate.backend.repository.VectorRepository;
 import com.realestate.backend.specification.ListingSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ import java.util.stream.Collectors;
 public class ListingService {
 
     private final ListingRepository listingRepository;
+    private final VectorRepository vectorRepository;
+    private final EmbeddingService embeddingService;
 
     public List<ListingResponse> getAllListings(ListingFilter filter) {
         return listingRepository.findAll(ListingSpecification.withFilters(filter))
@@ -35,11 +38,30 @@ public class ListingService {
     public ListingResponse createListing(ListingRequest request) {
         Listing listing = toEntity(request);
         Listing saved = listingRepository.save(listing);
+        float[] embedding = embeddingService.embedListing(saved);
+        vectorRepository.saveEmbedding(saved.getId(), embedding);
         return toResponse(saved);
     }
 
     public void deleteListing(UUID id) {
         listingRepository.deleteById(id);
+    }
+
+    public List<ListingResponse> semanticSearch(String query, int limit) {
+        float[] queryEmbedding = embeddingService.embedQuery(query);
+        List<UUID> ids = vectorRepository.findSimilar(queryEmbedding, limit);
+        return ids.stream()
+                .map(id -> listingRepository.findById(id).orElse(null))
+                .filter(listing -> listing != null)
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public void reindexAllListings() {
+        listingRepository.findAll().forEach(listing -> {
+            float[] embedding = embeddingService.embedListing(listing);
+            vectorRepository.saveEmbedding(listing.getId(), embedding);
+        });
     }
 
     // --- private helpers ---

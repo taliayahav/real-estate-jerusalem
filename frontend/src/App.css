@@ -109,6 +109,44 @@
   font-size: 1rem;
 }
 
+/* ── Semantic search bar ─────────────────────────── */
+
+.semantic-search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.semantic-search-input {
+  flex: 1;
+  height: 44px;
+  border: 2px solid #1a2e4a;
+  border-radius: 4px;
+  padding: 0 16px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: #222;
+  background-color: #fff;
+}
+
+.semantic-search-input:focus {
+  outline: none;
+  border-color: #c9a84c;
+}
+
+.semantic-mode-label {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.semantic-mode-label em {
+  color: #1a2e4a;
+  font-style: normal;
+  font-weight: bold;
+}
+
 /* ── Filter bar ──────────────────────────────────── */
 
 .filter-bar {

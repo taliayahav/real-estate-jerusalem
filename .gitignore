@@ -17,3 +17,6 @@ backend/target/
 # React
 frontend/node_modules/
 frontend/build/
+
+# pgvector source (cloned during setup, not part of the project)
+pgvector/

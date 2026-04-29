@@ -21,3 +21,11 @@ export const createListing = (listing) => {
 export const deleteListing = (id) => {
   return api.delete(`/listings/${id}`);
 };
+
+export const semanticSearch = (query, limit = 10) => {
+  return api.get('/listings/semantic-search', { params: { q: query, limit } });
+};
+
+export const reindexListings = () => {
+  return api.post('/listings/reindex');
+};
