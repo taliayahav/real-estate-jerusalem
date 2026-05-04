@@ -16,7 +16,3 @@ A property discovery platform for Jerusalem, similar to StreetEasy.
 - **Frontend:** React
 - **Database:** PostgreSQL + pgvector (for semantic search)
 - **AI:** OpenAI / Claude API (embeddings + natural language search)
-
-## Project Status
-
-Early development — setting up project structure.
