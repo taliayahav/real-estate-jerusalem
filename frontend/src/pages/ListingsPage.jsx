@@ -10,21 +10,27 @@ function ListingsPage() {
   const [filters, setFilters] = useState({});
   const [semanticQuery, setSemanticQuery] = useState('');
   const [isSemanticMode, setIsSemanticMode] = useState(false);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
 
   useEffect(() => {
     if (isSemanticMode) return;
     setLoading(true);
     setError(null);
-    getAllListings(filters)
+    getAllListings(filters, page)
       .then(response => {
-        setListings(response.data);
+        const data = response.data;
+        setListings(data.content);
+        setTotalPages(data.totalPages);
+        setTotalElements(data.totalElements);
         setLoading(false);
       })
       .catch(_err => {
         setError('Failed to load listings');
         setLoading(false);
       });
-  }, [filters, isSemanticMode]);
+  }, [filters, page, isSemanticMode]);
 
   const handleSemanticSearch = (e) => {
     e.preventDefault();
@@ -35,6 +41,7 @@ function ListingsPage() {
     semanticSearch(semanticQuery)
       .then(response => {
         setListings(response.data);
+        setTotalPages(0);
         setLoading(false);
       })
       .catch(() => {
@@ -46,6 +53,12 @@ function ListingsPage() {
   const handleClearSemantic = () => {
     setSemanticQuery('');
     setIsSemanticMode(false);
+    setPage(0);
+  };
+
+  const handleFiltersChange = (newFilters) => {
+    setFilters(newFilters);
+    setPage(0);
   };
 
   return (
@@ -68,7 +81,7 @@ function ListingsPage() {
         )}
       </form>
 
-      {!isSemanticMode && <ListingFilters onSearch={setFilters} />}
+      {!isSemanticMode && <ListingFilters onSearch={handleFiltersChange} />}
 
       {isSemanticMode && (
         <p className="semantic-mode-label">Showing AI search results for: <em>"{semanticQuery}"</em></p>
@@ -82,11 +95,36 @@ function ListingsPage() {
       )}
 
       {!loading && !error && (
-        <div className="listings-grid">
-          {listings.map(listing => (
-            <ListingCard key={listing.id} listing={listing} />
-          ))}
-        </div>
+        <>
+          {!isSemanticMode && totalElements > 0 && (
+            <p className="results-count">{totalElements} listing{totalElements !== 1 ? 's' : ''} found</p>
+          )}
+          <div className="listings-grid">
+            {listings.map(listing => (
+              <ListingCard key={listing.id} listing={listing} />
+            ))}
+          </div>
+
+          {!isSemanticMode && totalPages > 1 && (
+            <div className="pagination">
+              <button
+                className="pagination-btn"
+                onClick={() => setPage(p => p - 1)}
+                disabled={page === 0}
+              >
+                Previous
+              </button>
+              <span className="pagination-info">Page {page + 1} of {totalPages}</span>
+              <button
+                className="pagination-btn"
+                onClick={() => setPage(p => p + 1)}
+                disabled={page >= totalPages - 1}
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

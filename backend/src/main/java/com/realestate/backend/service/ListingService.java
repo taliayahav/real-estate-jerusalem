@@ -3,11 +3,14 @@ package com.realestate.backend.service;
 import com.realestate.backend.dto.ListingFilter;
 import com.realestate.backend.dto.ListingRequest;
 import com.realestate.backend.dto.ListingResponse;
+import com.realestate.backend.dto.PagedResponse;
 import com.realestate.backend.model.Listing;
 import com.realestate.backend.repository.ListingRepository;
 import com.realestate.backend.repository.VectorRepository;
 import com.realestate.backend.specification.ListingSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,11 +25,13 @@ public class ListingService {
     private final VectorRepository vectorRepository;
     private final EmbeddingService embeddingService;
 
-    public List<ListingResponse> getAllListings(ListingFilter filter) {
-        return listingRepository.findAll(ListingSpecification.withFilters(filter))
-                .stream()
+    public PagedResponse<ListingResponse> getAllListings(ListingFilter filter, Pageable pageable) {
+        Page<Listing> page = listingRepository.findAll(ListingSpecification.withFilters(filter), pageable);
+        List<ListingResponse> content = page.getContent().stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
+        return new PagedResponse<>(content, page.getNumber(), page.getSize(),
+                page.getTotalElements(), page.getTotalPages(), page.isLast());
     }
 
     public ListingResponse getListingById(UUID id) {

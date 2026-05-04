@@ -3,8 +3,11 @@ package com.realestate.backend.controller;
 import com.realestate.backend.dto.ListingFilter;
 import com.realestate.backend.dto.ListingRequest;
 import com.realestate.backend.dto.ListingResponse;
+import com.realestate.backend.dto.PagedResponse;
 import com.realestate.backend.service.ListingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +22,12 @@ public class ListingController {
     private final ListingService listingService;
 
     @GetMapping
-    public ResponseEntity<List<ListingResponse>> getAllListings(@ModelAttribute ListingFilter filter) {
-        return ResponseEntity.ok(listingService.getAllListings(filter));
+    public ResponseEntity<PagedResponse<ListingResponse>> getAllListings(
+            @ModelAttribute ListingFilter filter,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size) {
+        PageRequest pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return ResponseEntity.ok(listingService.getAllListings(filter, pageable));
     }
 
     @GetMapping("/semantic-search")

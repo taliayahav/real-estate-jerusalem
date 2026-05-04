@@ -14,8 +14,8 @@ api.interceptors.request.use(config => {
   return config;
 });
 
-export const getAllListings = (filters = {}) => {
-  return api.get('/listings', { params: filters });
+export const getAllListings = (filters = {}, page = 0, size = 12) => {
+  return api.get('/listings', { params: { ...filters, page, size } });
 };
 
 export const getListingById = (id) => {
